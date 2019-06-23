@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <!-- Meta -->
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  
+  <!-- Styles -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <link rel="stylesheet" href="styles/index.processed.css">
+  
+  <!-- Scripts -->
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+  <style>
+    .active { color: red; }
+    .col-md { font-size: 30px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <p :class="{'active': isActive}">{{msg}}</p>
+    <p :class="[isActive ? 'active' : 'col-md']">{{msg}}</p>
+  </div>
+ <script>
+  new Vue({
+    el: '#app',
+    data: function() {
+      return {
+        msg: 'hello world',
+        isActive: true
+      }
+    }
+  })
+</script>
+</body>
+</html>

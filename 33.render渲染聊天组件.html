@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <ele></ele>
+  </div>
+<script>
+  Vue.component('ele', {
+    data() {
+      return {
+        value: '',
+        list: []
+      }
+    },
+    render(h) {
+      let listNode = null
+      if(this.list.length) {
+        listNode = h('ul', this.list.map(item => h('li', item)))
+      } else {
+        listNode = h('p', '暂无聊天内容')
+      }
+      return h('div', [
+        listNode,
+        h('input', {
+          attrs: {
+            placeholder: '输入内容，按回车键发送',
+            autofocus: true
+          },
+          style: {
+            width: '200px'
+          },
+          on: {
+            keyup: (e) => {
+              if(e.keyCode !== 13) return false
+              if(!e.target.value) {
+                alert('内容不能为空')
+                return false
+              }
+              this.list.push(e.target.value)
+              e.target.value = ''
+            }
+          }
+        })
+      ])
+    }
+  })
+  new Vue({
+    el: '#app',
+    data() {
+      return {}
+    }
+  })
+</script>
+</body>
+</html>

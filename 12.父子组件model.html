@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <p>总数：{{total}}</p>
+    <!-- 下面两种方法是等价的 -->
+    <!-- <my-component
+      v-model="total"
+    ></my-component> -->
+    <my-component
+      @input="handleGetTotal"
+    ></my-component>
+  </div>
+ <script>
+   Vue.component('my-component',{
+     template: `<div>
+        <button @click="handleIncrease">增加</button>
+        <button @click="handleReduce">减少</button>
+      </div>`,
+      data() {
+        return {
+          counter: 0
+        }
+      },
+      methods: {
+        handleIncrease() {
+          this.counter ++;
+          this.$emit('input', this.counter);
+        },
+        handleReduce() {
+          this.counter --;
+          this.$emit('input', this.counter);
+        }
+      }
+   })
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        total: 0
+      }
+    },
+    methods: {
+      handleGetTotal(counter) {
+        this.total = counter;
+      }
+    }
+  })
+</script>
+</body>
+</html>

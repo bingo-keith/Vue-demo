@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div v-test:msg.a.b="message"></div>
+  </div>
+<script>
+  Vue.directive('test', {
+    bind(el, binding, vnode) {
+      const keys = []
+      for(let i in vnode) {
+        keys.push(i)
+      }
+      console.log(vnode);
+      el.innerHTML = `
+        name: ${binding.name}<br/>
+        value: ${binding.value}<br/>
+        expressions: ${binding.expression}<br/>
+        arguments: ${JSON.stringify(binding.modifiers)}<br/>
+        vnode keys: ${keys.join(', ')}
+      `
+    }
+  })
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        message: 'some text'
+      }
+    }
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <ele>
+      <div>
+        <Child></Child>
+      </div>
+    </ele>
+  </div>
+<script>
+  Vue.component('Child', {
+    render(h) {
+      return h('p', 'text')
+    }
+  })
+  Vue.component('ele', {
+    render(h) {
+      function cloneVNode(vnode) {
+        const cloneChildren = vnode.children && vnode.children.map(vnode => cloneVNode(vnode))
+        const cloned = h(vnode.tag, vnode.data, cloneChildren)
+        cloned.text = vnode.text
+        cloned.isComment = vnode.isComment
+        cloned.componentOptions = vnode.componentOptions
+        cloned.elm = vnode.elm
+        cloned.context = vnode.context;
+        cloned.ns = vnode.ns
+        cloned.isStatic = vnode.isStatic
+        cloned.key = vnode.key
+        return cloned
+      }
+      const vNodes = this.$slots.default
+      const cloneVNodes = vNodes.map(vnode => cloneVNode(vnode))
+      return h('div', vNodes, cloneVNodes)
+    }
+  })
+  new Vue({
+    el: '#app'
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <!-- <div v-time="timeNow"></div> -->
+    <!-- <div v-time="timeBefore"></div> -->
+    <div v-birthday="birthday"></div>
+  </div>
+<script>
+  const Time = {
+    // 获取当前时间戳
+    getUnix() {
+      return Date.now()
+    },
+    // 获取今天0点0分0秒的时间戳
+    getTodayUnix() {
+      let date = new Date()
+      date.setHours(0)
+      date.setMinutes(0)
+      date.setSeconds(0)
+      date.setMilliseconds(0)
+      return date.getTime()
+    },
+    // 获取今年1月1日0点0分0秒的时间戳
+    getYearUnix() {
+      let date = new Date()
+      date.setHours(0)
+      date.setMinutes(0)
+      date.setSeconds(0)
+      date.setMilliseconds(0)
+      date.setMonth(0)
+      date.setDate(1)
+      return date.getTime()
+    },
+    getLastDate(time) {
+      const date = new Date(time)
+      const month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+      const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+      return date.getFullYear() + '-' + month + '-' + day
+    },
+    getFormatTime(timestamp) {
+      const now = this.getUnix()
+      const today = this.getTodayUnix()
+      const year = this.getYearUnix()
+      const timer = (now - timestamp) / 1000
+      console.log(timer)
+      let tip = '';
+      if(timer <= 0) {
+        tip = '刚刚'
+      } else if(Math.floor(timer/60) <= 0) {
+        tip = '刚刚'
+      } else if(timer < 3600) {
+        tip = Math.floor(timer/60) + '分钟前'
+      } else if(timer > 3600 && (timestamp - today >= 0)) {
+        tip = Math.floor(timer/3600) + '小时前'
+      } else if(timer/86400 <= 31) {
+        tip = Math.ceil(timer/86400) + '天前'
+      } else {
+        tip = this.getLastDate(timestamp)
+      }
+      return tip
+    },
+  }
+  
+  
+  Vue.directive('time', {
+    bind(el, binding) {
+      el.innerHTML = Time.getFormatTime(binding.value)
+      el.__timeout__ = setInterval( () => {
+        el.innerHTML = Time.getFormatTime(binding.value)
+      }, 1000)
+    },
+    unbind(el) {
+      clearInterval(el.__timeout__)
+      delete el.__timeout__
+    }
+  })
+  const Birthday = {
+    getUnix() {
+      return Date.now()
+    },
+    getBirthday(date) {
+      const birthdayTimestamp = new Date(date).getTime()
+      let timestamp = this.getUnix() - birthdayTimestamp
+      let res = '郑语涵已经出生了'
+
+      if(Math.floor(timestamp / (1000 * 60 * 60 * 24 * 365)) > 0) {
+        res += Math.floor(timestamp / ( 1000 * 60 * 60 * 24 * 365)) + '年'
+      }
+      timestamp = timestamp % (1000 * 60 * 60 * 24 * 365)
+
+      if(Math.floor(timestamp / (1000 * 60 * 60 * 24)) > 1) {
+        res += Math.floor(timestamp / (1000 * 60 * 60 * 24)) + '天'
+      }
+      timestamp = timestamp % (1000 * 60 * 60 * 24)
+
+      if(timestamp % (1000 * 60 * 60 ) > 0) {
+        res += Math.floor(timestamp / (1000 * 60 * 60)) + '小时'
+      }
+      timestamp = timestamp % (1000 * 60 * 60)
+
+      if(timestamp % (1000 * 60) > 0) {
+        res += Math.floor(timestamp / (1000 * 60)) + '分钟'
+      }
+      timestamp = timestamp % (1000 * 60)
+
+      if(timestamp % 1000 > 0) {
+        res += Math.floor(timestamp / 1000) + '秒'
+      }
+      return res
+    }
+  }
+  
+  Vue.directive('birthday', {
+    bind(el, binding) {
+      el.innerHTML = Birthday.getBirthday(binding.value)
+      el.__birthday__ = setInterval( () => {
+        el.innerHTML = Birthday.getBirthday(binding.value)
+      }, 1000)
+    },
+    unbind(el) {
+      clearInterval(el.__birthday__)
+      delete el.__birthday__
+    }
+  })
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        timeNow: Date.now(),
+        timeBefore: 1488930695721,
+        birthday: '2012-02-17 10:00:00'
+      }
+    }
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+    table {
+      width: 100%;
+      margin-bottom: 24px;
+      border-collapse: collapse;
+      border-spacing: 0;
+      empty-cells: show;
+      border: 1px solid #e9e9e9;
+    }
+    table th {
+      background: #f7f7f7;
+      color: #5c6b77;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    table td, table th {
+      padding: 8px 16px;
+      border: 1px solid #e9e9e9;
+      text-align: left;
+    }
+    table th a {
+      display: inline-block;
+      margin: 0 4px;
+      cursor: pointer;
+    }
+    table th a.on{
+      color: #3399ff;
+    }
+    table th a:hover {
+      color :#3399ff;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <v-table :data="data" :columns="columns"></v-table>
+    <button @click="handleAddData">添加数据</button>
+  </div>
+<script>
+  Vue.component('vTable', {
+    props: {
+      columns: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      data: {
+        type: Array,
+        default() {
+          return []
+        }
+      }
+    },
+    data() {
+      return {
+        currentColumns: [],
+        currentData: []
+      }
+    },
+    watch: {
+      data() {
+        this.makeData()
+        const sortedColumn = this.currentColumns.filter(col => col._sortType !== 'normal' )
+        if(sortedColumn.length > 0) {
+          if(sortedColumn[0]._sortType === 'asc') {
+            this.handleSortByAsc(sortedColumn[0]._index)
+          } else {
+            this.handleSortByDesc(sortedColumn[0]._index)
+          }
+        }
+      }
+    },
+    methods: {
+      makeColumns() {
+        this.currentColumns = this.columns.map((col, index) => {
+          col._sortable = 'normal';
+          col._index = index;
+          return col;
+        })
+      },
+      makeData() {
+        this.currentData = this.data.map((row, index) => {
+          row._index = index;
+          return row;
+        })
+      },
+      handleSortByAsc(index) {
+        this.currentColumns.forEach(col => col._sortType = 'normal' )
+        this.currentColumns[index]._sortType = 'asc'
+        // 部分浏览器对sort处理不同，这样可以做到兼容处理
+        this.currentData.sort((a, b) => a.age > b.age ? 1 : -1 )
+      },
+      handleSortByDesc(index) {
+        this.currentColumns.forEach(col => col._sortType = 'normal' )
+        this.currentColumns[index]._sortType = 'desc'
+        this.currentData.sort((a, b) => a.age < b.age ? 1 : -1 )
+      }
+    },
+    mounted() {
+      this.makeColumns()
+      this.makeData()
+    },
+    render(h) {
+      let ths = []
+      this.currentColumns.forEach((col, index) => {
+        if(col.sortable) {
+          ths.push(h('th', {
+            attrs: {
+              width: col.width
+            }
+          }, [
+            h('span', col.title),
+            h('a', {
+              class: {
+                on: col._sortType === 'asc'
+              },
+              on: {
+                click: () => {
+                  this.handleSortByAsc(index)
+                }
+              }
+            }, '↑'),
+            h('a', {
+              class: {
+                on: col._sortType === 'desc'
+              },
+              on: {
+                click: () => {
+                  this.handleSortByDesc(index)
+                }
+              }
+            }, '↓')
+          ]))
+        } else {
+          ths.push(h('th', {
+            attrs: {
+              width: col.width
+            }
+          }, col.title))
+        }
+      })
+      let trs = []
+      
+      this.currentData.forEach(row => {
+        let tds = []
+        this.currentColumns.forEach(cell => {
+          
+          tds.push(h('td', row[cell.key]))
+        })
+        trs.push(h('tr', tds))
+      })
+      return h('table', [
+        h('thead', [
+          h('tr', ths)
+        ]),
+        h('tbody', trs)
+      ])
+    }
+  })
+
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        columns: [
+          {
+            title: '姓名',
+            key: 'name',
+            width: 50
+          },
+          {
+            title: '年龄',
+            key: 'age',
+            sortable: true,
+            width: 100
+          },
+          {
+            title: '出生日期',
+            key: 'birthday',
+            sortable: true,
+            width: 100
+          },
+          {
+            title: '地址',
+            key: 'address',
+            width: 100
+          }
+        ],
+        data: [
+          {
+            name: '王小明1',
+            age: 11,
+            birthday: '1998-02-21',
+            address: '测试地址1'
+          },
+          {
+            name: '王小明4',
+            age: 44,
+            birthday: '1995-02-21',
+            address: '测试地址4'
+          },
+          {
+            name: '王小明3',
+            age: 33,
+            birthday: '1996-02-21',
+            address: '测试地址3'
+          },
+          {
+            name: '王小明2',
+            age: 22,
+            birthday: '1997-02-21',
+            address: '测试地址2'
+          },
+        ]
+      }
+    },
+    methods: {
+      handleAddData() {
+        this.data.push({
+          name: '刘晓天',
+          age: 19,
+          birthday: '2002-05-30',
+          address: '北京市的地址'
+        })
+      }
+    }
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <!-- Meta -->
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  
+  <!-- Styles -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <link rel="stylesheet" href="styles/index.processed.css">
+  
+  <!-- Scripts -->
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h2>{{msg | toLowerCase | getResult('args1', 'args2')}}</h2>
+  </div>
+ <script>
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        msg: 'Hello World!!'
+      }
+    },
+   filters: {
+     toLowerCase: function(val) {
+       console.log(val)
+       return val.toLowerCase();
+     },
+     getResult: function(val1, val2, val3) {
+       return val1 + val2 + val3;
+     }
+   }
+  })
+</script>
+</body>
+</html>

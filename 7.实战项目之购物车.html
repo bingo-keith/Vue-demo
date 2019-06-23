@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <!-- Meta -->
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  
+  <!-- Styles -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <link rel="stylesheet" href="styles/index.processed.css">
+  
+  <!-- Scripts -->
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <template v-if="list.length">
+      <table>
+        <thead>
+          <tr>
+            <th><input type="checkbox" value="all" /></th>
+            <th>商品名称</th>
+            <th>商品单价</th>
+            <th>购买数量</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in list" :key="item.id">
+            <td><input type="checkbox" :value="item.id" /></td>
+            <td>{{item.name}}</td>
+            <td>{{item.price}}</td>
+            <td>{{item.count}}</td>
+            <td>
+              <button @click="handleAdd(item)">添加</button>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          {{total}}
+        </tfoot>
+      </table>
+    </template>
+    <div v-else>购物车为空</div>
+  </div>
+ <script>
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        list: [
+          {
+            id: 1,
+            name: 'iPhone 7',
+            price: 6188,
+            count: 0
+          },{
+            id: 2,
+            name: 'iPhone 8',
+            price: 2288,
+            count: 0
+          },{
+            id: 2,
+            name: 'iPhone 9',
+            price: 4188,
+            count: 0
+          },
+        ],
+        total: 0
+      }
+    },
+    computed: {
+      
+    },
+    mounted() {
+     console.log(this.testArr) 
+    },
+    methods: {
+      handleAdd(item) {
+        item.count ++;
+        this.total += item.price * item.count
+      }
+    }
+  })
+</script>
+</body>
+</html>

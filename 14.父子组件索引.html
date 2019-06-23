@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <p @click="handleRef">按钮</p>
+    <my-component
+      ref="com"
+    ></my-component>
+  </div>
+ <script>
+   Vue.component('my-component',{
+     template: `<div>{{msg}}</div>`,
+      data() {
+        return { 
+          msg: '子组件内容'
+        }
+      }
+   })
+  new Vue({
+    el: '#app',
+    methods: {
+      handleRef(e) {
+        e.target.innerText = this.$refs.com.msg
+        console.log(this.$refs.com.msg)
+      }
+    }
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <smart-item :data="data"></smart-item>
+    <button @click="change('img')">切换为图片组件</button>
+    <button @click="change('video')">切换为视频组件</button>
+    <button @click="change('text')">切换为文本组件</button>
+  </div>
+<script>
+  const ImgItem = {
+    props: ['data'],
+    render(h) {
+      return h('div', [
+        h('p', '图片组件'),
+        h('img', {
+          attrs: {
+            src: this.data.url
+          }
+        })
+      ])
+    }
+  }
+  const VideoItem = {
+    props: ['data'],
+    render(h) {
+      return h('div', [
+        h('p', '视频组件'),
+        h('video', {
+          attrs: {
+            src: this.data.url,
+            controls: 'controls',
+            autoplay: 'autoplay'
+          }
+        })
+      ])
+    }
+  }
+  const TextItem = {
+    props: ['data'],
+    render(h) {
+      return h('div', [
+        h('p', '文本组件'),
+        h('p', this.data.text)
+      ])
+    }
+  }
+  
+  Vue.component('smart-item', {
+    functional: true, //函数化组件
+    render: (h, context) => {
+      function getComponent() {
+        const data = context.props.data
+        if(data.type === 'img') return ImgItem
+        if(data.type === 'video') return VideoItem
+        return TextItem
+      }
+      return h(
+        getComponent(),
+        {
+          // 把smart-item的prop:data转给上面智能选择的组件
+          props: {
+            data: context.props.data 
+          }
+        },
+        context.children
+      )
+    },
+    props: {
+      data: {
+        type: Object,
+        required: true
+      }
+    }
+  })
+
+  new Vue({
+    el: '#app',
+    data: {
+      data: {}
+    },
+    methods: {
+      change(type) {
+        const actions = {
+          img: () => {
+            this.data = {
+              type: 'img',
+              url: 'https://raw.githubusercontent.com/iview/iview/master/assets/logo.png'
+            }
+          },
+          video: () => {
+            this.data = {
+              type: 'video',
+              url: 'http://vjs.zencdn.net/v/oceans.mp4'
+            }
+          },
+          text: () => {
+            this.data = {
+              props: 'text',
+              text: '这是一段文本内容'
+            }
+          }
+        }
+        actions[type]()
+      }
+    },
+    created() {
+      this.change('img')
+    }
+  })
+</script>
+</body>
+</html>

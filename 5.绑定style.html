@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <!-- Meta -->
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  
+  <!-- Styles -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <link rel="stylesheet" href="styles/index.processed.css">
+  
+  <!-- Scripts -->
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <p :style="{'color': color, 'fontSize': fontSize + 'px'}">{{msg}}</p>
+  </div>
+ <script>
+  new Vue({
+    el: '#app',
+    data: function() {
+      return {
+        msg: 'hello world',
+        color: 'red',
+        fontSize: 30
+      }
+    }
+  })
+</script>
+</body>
+</html>

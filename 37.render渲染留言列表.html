@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+  <style>
+    [v-cloak] {
+      display: none
+    }
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    .message {
+      width: 450px;
+      text-align: right;
+    }
+    .message div {
+      margin-bottom: 12px;
+    }
+    .message span {
+      display: inline-block;
+      width: 100px;
+      vertical-align: top;
+    }
+    .message input,
+    .message textarea {
+      width: 300px;
+      height: 32px;
+      padding: 0 6px;
+      color: #657180;
+      border: 1px solid #d7dde4;
+    }
+    .message input:focus,
+    .message.textarea:focus {
+      border: 1px solid #3399ff;
+    }
+    .message textarea {
+      height: 60px;
+      padding: 4px 6px;
+    }
+    .message button {
+      display: inline-block;
+      padding: 6px 15px;
+      border: 1px solid #39f;
+      border-radius: 4px;
+      color: #fff;
+      background-color: #39f;
+      cursor: pointer;
+      outline: none;
+    }
+    .list {
+      margin-top: 50px;
+    }
+    .list-item {
+      padding: 10px;
+      border-bottom: 1px solid #e3e8ee;
+      overflow: hidden;
+    }
+    .list-item span {
+      display: block;
+      width: 60px;
+      float: left;
+      color: #39f;
+    }
+    .list-msg {
+      display: block;
+      margin-left: 60px;
+      text-align: justify;
+    }
+    .list-msg a {
+      color: #9ea7b4;
+      cursor: pointer;
+      float: right;
+    }
+    .list-msg a:hover {
+      color: #39f;
+    }
+    .list-nothing {
+      text-align: center;
+      color: #9ea7b4;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak style="width: 500px; margin: 0 auto; padding: 50px;">
+    <div class="message">
+      <v-input v-model="username"></v-input>
+      <v-textarea v-model="message" ref="message"></v-textarea>
+      <button @click="handleSend">发s布</button>
+    </div>
+    <list :list="list" @reply="handleReply"></list>
+  </div>
+<script>
+  Vue.component('vInput', {
+    props: {
+      value: {
+        type: [String, Number],
+        default: ''
+      }
+    },
+    render(h) {
+      return h('div', [
+        h('span', '昵称：'),
+        h('input', {
+          attrs: {
+            type: 'text',
+            placeholder: '请输入昵称'
+          },
+          domProps: {
+            value: this.value
+          },
+          on: {
+            input: (e) => {
+              console.log(this.value);
+              // 下面一行代码会显示警告
+              // vue.js:525 [Vue warn]: Avoid mutating a prop directly since the value will be overwritten whenever the parent component re-renders. Instead, use a data or computed property based on the prop's value. Prop being mutated: "value"
+              // 原因是子组件将要修改父组件prop传过来的数据，不复合单向数据流的规范，子组件可以通过emit修改父组件传递的数据，不能直接修改
+              // this.value = e.target.value
+              this.$emit('input', e.target.value)
+            }
+          }
+        })
+      ])
+    }
+  })
+  
+  Vue.component('vTextarea', {
+    props: {
+      value: {
+        type: String,
+        default: ''
+      }
+    },
+    render(h) {
+      return h('div', [
+        h('textarea', {
+          attrs: {
+            placeholder: '请输入留言内容'
+          },
+          domProps: {
+            value: this.value
+          },
+          ref: 'message', // 这里注意要手动再加个ref，否则158行获取不到DOM
+          on: {
+            input: (e) => {
+              // this.value = e.target.value
+              this.$emit('input', e.target.value)
+            }
+          }
+        })
+      ])
+    },
+    methods: {
+      focus() {
+        this.$refs.message.focus()
+      }
+    }
+  })
+
+  Vue.component('list', {
+    props: {
+      list: {
+        type: Array,
+        default: () => []
+      }
+    },
+    render(h) {
+      let list = []
+      this.list.forEach((msg, index) => {
+        let node = h('div', {
+          attrs: {
+            class: 'list-item'
+          }
+        }, [
+          h('span', msg.name, '： '),
+          h('div', {
+            attrs: {
+              class: 'list-msg'
+            }
+          }, [
+            h('p', msg.message),
+            h('a', {
+              attrs: {
+                class: 'list-reply'
+              },
+              on: {
+                click: () => {
+                  this.handleReply(index)
+                }
+              }
+            }, '回复')
+          ])
+        ])
+        list.push(node)
+      })
+      if(this.list.length) {
+        return h('div', {
+          attrs: {
+            class: 'list'
+          }
+        }, list)
+      } else {
+        return h('div', {
+          attrs: {
+            class: 'list-nothing'
+          }
+        }, '留言列表为空')
+      }
+    },
+    methods: {
+      handleReply(index) {
+        this.$emit('reply', index)
+      }
+    }
+  })
+
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        message: '',
+        username: '',
+        list: []
+      }
+    },
+    methods: {
+      handleSend() {
+        if(!this.username || !this.message) {
+          alert('请输入昵称或留言内容')
+          return false
+        }
+        this.list.push({
+          name: this.username,
+          message: this.message
+        })
+        this.message = ''
+        this.username = ''
+      },
+      handleReply(index) {
+        const name = this.list[index].name
+        this.message = '回复@' + name + '：'
+        this.$refs.message.focus()
+      }
+    }
+  })
+</script>
+</body>
+</html>

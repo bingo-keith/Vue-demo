@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- <button @click="handleChange">按钮</button> -->
+    <input-number :max="max" :min="min" v-model="value" />
+  </div>
+<script>
+  // inserted钩子函数，它表示自定义指令插入到标签中的时候就执行
+  // inserted钩子函数有两个参数（el,binding） el表示使用自定义指令的元素，binding表示自定义指令的信息
+  Vue.directive('focus', { inserted(el, binding) {
+    console.log(el, binding);
+    el.focus()
+  } })
+  Vue.component('input-number', {
+    template: `
+      <div>
+        <input type="text" 
+               :value="currentValue"
+               @change="handleChange"
+               @keydown.down="handleDown"
+               @keydown.up="handleUp"
+               v-focus
+         />
+         <button
+          @click="handleDown"
+          :disabled="currentValue <= min"
+         >-</button>
+         <button
+          @click="handleUp"
+          :disabled="currentValue >= max"
+         >+</button>
+      </div>
+    `,
+    data() {
+      return {
+        currentValue: this.value
+      }
+    },
+    // 对于从父组件传递的数据进行过滤，还可以在data方法里初始化时就对数据过滤
+    // data() {
+    //   const val = this.value;
+    //   if(val > this.max) val = this.max
+    //   if(val < this.min) val = this.min
+    //   return {
+    //     currentValue: val
+    //   }
+    // },
+    props: {
+      max: {
+        type: Number,
+        default: Infinity
+      },
+      min: {
+        type: Number,
+        default: -Infinity
+      },
+      value: {
+        type: Number,
+        default: 0
+      }
+    },
+    watch: {
+      currentValue(val) {
+        if(val > this.max) val = this.max
+        if(val < this.min) val = this.min
+        this.currentValue = val;
+      },
+      value(val) {
+        if(val > this.max) val = this.max
+        if(val < this.min) val = this.min
+        this.currentValue = val;
+      }
+    },
+    // 从父组件里传过来的数据可能不符号需求，所以要处理一下
+    methods: {
+      updateValue(val) {
+        if(val > this.max) val = this.max
+        if(val < this.min) val = this.min
+        this.currentValue = val;
+      },
+      handleDown() {
+        if(this.currentValue <= this.min) return
+        this.currentValue -= 10
+      },
+      handleUp() {
+        if(this.currentValue >= this.max) return
+        this.currentValue += 10
+      },
+      handleChange(val) {
+        this.currentValue = val
+      }
+    },
+    mounted() {
+      this.updateValue(this.value)
+    }
+  })
+  new Vue({
+    el: '#app',
+    data: {
+      value: -10,
+      max: 100,
+      min: 0
+    },
+    // methods: {
+    //   handleChange() {
+    //     this.value ++
+    //     if(this.value >= this.max) this.value = this.max
+    //     if(this.value <= this.min) this.value = this.min
+    //     console.log(this.value);
+        
+    //   }
+    // }
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+  </div>
+<script>
+  let myComponent = Vue.extend({
+    template: '<div>{{name}}</div>',
+    data() {
+      return {
+        name: '手动挂载的实例'
+      }
+    }
+  })
+  // new myComponent().$mount('#app')
+  // 或者
+  // new myComponent({
+  //   el: '#app'
+  // })
+  // 或者
+    let component = new myComponent().$mount();
+    document.getElementById('app').appendChild(component.$el);
+</script>
+</body>
+</html>

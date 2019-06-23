@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <my-component :list="list">
+      <p>default slot</p>
+    </my-component>
+  </div>
+ <script>
+   Vue.component('my-component',{
+     name: 'child-component',
+     props: {
+       count: {
+        type: Number,
+        default: 0
+       },
+       list: {
+        type: Array,
+        default: () => {
+          return []
+        }
+       }
+     },
+     data() {
+       return {
+         len: 0
+       }
+     },
+     // TODO 无法向子组件里传数据供子组件循环遍历调用
+     // 20、39和40行相当于for(let i = 0; i < 5; i ++) {}
+     template: `<div>
+      <p>ouside</p>
+      <slot></slot>
+      <child-component 
+        :count="count + 1"
+        v-if="count < 5">
+        <p>子组件的slot</p>
+      </child-component>
+      <br/>
+      {{list.length}}
+     </div>`,
+     mounted() {
+       console.log(this.list, 'test');
+      this.len = this.list.length
+      setTimeout(() => {
+        console.log(this.len, this.list.length, 'time');
+        this.$forceUpdate();
+      }, 500)
+      
+       
+     }
+   })
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        list: [
+          {
+            name: 'zs',
+            age: 11
+          },
+          {
+            name: 'll',
+            age: 22
+          },
+          {
+            name: 'kk',
+            age: 33
+          },
+        ]
+      }
+    }
+  })
+</script>
+</body>
+</html>

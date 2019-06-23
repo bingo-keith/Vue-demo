@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <ele :list="list"></ele>
+    <button @click="handleClick">显示列表</button>
+  </div>
+<script>
+  Vue.component('ele', {
+    props: ['list'],
+    render(h) {
+      // var nodes = []
+      // for( let i = 0; i < this.list.length; i ++) {
+      //   nodes.push(h('p', this.list[i]));
+      // }
+      // return h('div', nodes)
+
+      if(this.list.length) {
+        return h('ul', this.list.map(item => h('li', item)))
+      } else {
+        return h('p' , '列表为空')
+      }
+    }
+  })
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        list: []
+      }
+    },
+    methods: {
+      handleClick() {
+        this.list = [
+          '测试1',
+          '测试2',
+          '测试3',
+        ]
+      }
+    }
+  })
+</script>
+</body>
+</html>

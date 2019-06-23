@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue实战demo</title>
+  <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <anchor :level="2" title="特性">特性</anchor>
+  </div>
+<script>
+  Vue.component('anchor', {
+    props: {
+      level: {
+        type: Number,
+        required: true
+      },
+      title: {
+        type: String,
+        default: ''
+      }
+    },
+    render(createElement) {
+      return createElement(
+        'h' + this.level,
+        [
+          createElement(
+            'a',
+            {
+              class: {
+                foo: true,
+                bar: false
+              },
+              style: {
+                color: 'red'
+              },
+              attr: {
+                id: 'foo'
+              },
+              // 组件props
+              props: {
+                myProp: 'bar'
+              },
+              // dom属性
+              domProps: {
+                href: '#' + this.title
+              },
+              on: {
+                click: this.handleClick
+              },
+              nativeOn: {
+                click: this.handleClick
+              },
+              // 作用域slot
+              scopredSlots: {
+                default: props => h('span', props.text)
+              },
+              slot: 'name-of-slot',
+              key: 'myKey',
+              ref: 'myRef',
+              directives: [
+                {
+                  name: 'my-custom-directive',
+                  value: '2',
+                  expression: '1 + 1',
+                  arg: 'foo',
+                  modifiers: {
+                    bar: true
+                  }
+                }
+              ]
+            },
+            this.$slots.default
+          )
+        ]
+      )
+    }
+  });
+  new Vue({
+    el: '#app'
+  })
+</script>
+</body>
+</html>
