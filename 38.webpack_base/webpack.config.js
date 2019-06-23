@@ -6,7 +6,7 @@ const config = {
     },
     output: {
         path: path.join(__dirname, './dist'),
-        publicPath: './dist/',
+        publicPath: '/dist/',
         filename: 'main.js'
     }
 }
