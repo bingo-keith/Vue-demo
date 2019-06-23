@@ -2,6 +2,10 @@ const path = require('path')
 const ExtracTextPlugin = require('extract-text-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
+function resolve (dir) {
+    return path.join(__dirname, '..', dir)
+}
+
 const config = {
     entry: {
         main: './main'
@@ -28,7 +32,11 @@ const config = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                exclude: /node_modules/
+                exclude: /node_modules/,
+                options: {
+                    presets: ['es2015']
+                },
+                include: [resolve('./')]
             },
             // 遇到require或import导入.css的文件，先通过css-loader转换，再通过style-loader转换
             {
