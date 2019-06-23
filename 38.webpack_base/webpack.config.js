@@ -1,5 +1,6 @@
 const path = require('path')
 const ExtracTextPlugin = require('extract-text-webpack-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 const config = {
     entry: {
@@ -12,6 +13,23 @@ const config = {
     },
     module: {
         rules: [
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        css: ExtracTextPlugin.extract({
+                            use: 'css-loader',
+                            fallback: 'vue-style-loader'
+                        })
+                    }
+                }
+            },
+            {
+                test: /\.js$/,
+                loader: 'babel-loader',
+                exclude: /node_modules/
+            },
             // 遇到require或import导入.css的文件，先通过css-loader转换，再通过style-loader转换
             {
                 test: /\.css$/,
@@ -24,7 +42,9 @@ const config = {
     },
     plugins: [
         // 重命名提取后的css文件
-        new ExtracTextPlugin("main.css")
+        new ExtracTextPlugin("main.css"),
+        // vue-loader v15要调用该插件才能使用
+        new VueLoaderPlugin()
     ]
 }
 
