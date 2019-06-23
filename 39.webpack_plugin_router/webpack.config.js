@@ -1,10 +1,5 @@
-const path = require('path')
-const ExtracTextPlugin = require('extract-text-webpack-plugin')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
-
-function resolve (dir) {
-    return path.join(__dirname, '..', dir)
-}
+const path = require('path');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const config = {
     entry: {
@@ -22,7 +17,7 @@ const config = {
                 loader: 'vue-loader',
                 options: {
                     loaders: {
-                        css: ExtracTextPlugin.extract({
+                        css: ExtractTextPlugin.extract({
                             use: 'css-loader',
                             fallback: 'vue-style-loader'
                         })
@@ -32,35 +27,27 @@ const config = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                exclude: /node_modules/,
-                options: {
-                    presets: ['es2015']
-                },
-                include: [resolve('./')]
+                exclude: /node_modules/
             },
-            // 遇到require或import导入.css的文件，先通过css-loader转换，再通过style-loader转换
             {
                 test: /\.css$/,
-                use: ExtracTextPlugin.extract({
+                use: ExtractTextPlugin.extract({
                     use: 'css-loader',
                     fallback: 'style-loader'
                 })
             },
             {
                 test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/,
-                loader: 'url-loader',
-                options: {
-                    limit: 100000
-                }
+                loader: 'url-loader?limit=1024'
             }
         ]
     },
     plugins: [
-        // 重命名提取后的css文件
-        new ExtracTextPlugin("main.css"),
-        // vue-loader v15要调用该插件才能使用
-        new VueLoaderPlugin()
+        new ExtractTextPlugin({
+            filename: '[name].css',
+            allChunks: true
+        })
     ]
-}
+};
 
 module.exports = config;
