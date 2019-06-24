@@ -3,7 +3,9 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Vuex from 'vuex';
 import App from './app.vue';
+import vueBus from './vue-bus.js';
 
+Vue.use(vueBus)
 Vue.use(Vuex)
 Vue.use(VueRouter)
 

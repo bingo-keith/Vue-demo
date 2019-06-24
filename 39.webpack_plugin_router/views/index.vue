@@ -9,16 +9,28 @@
         <button @click="handleIncrement(demo)">加一</button>
         <button @click="handleDecrease(2)">减一</button>
         <router-link to="/about">跳转到 about</router-link>
+        <hr>
+        <Counter :number="number"></Counter>
     </div>
 </template>
 <script>
+    import Counter from './Counter.vue';
     export default {
         data() {
             return {
                 demo: {
                     count: 10
-                }
+                },
+                number: 0
             }
+        },
+        components: {
+            Counter
+        },
+        created() {
+            this.$bus.on('add', num => {
+                this.number += num;
+            })
         },
         computed: {
             count() {
