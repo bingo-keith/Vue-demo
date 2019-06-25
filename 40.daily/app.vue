@@ -37,13 +37,17 @@
         ></Item>
       </template>
     </div>
-    <!-- <daily-article></daily-article> -->
+    <div class="daily">
+      <Item @click.native="handleClick(item.id)"></Item>
+      <daily-article :id="articleId"></daily-article>
+    </div>
   </div>
 </template>
 
 <script>
 import $ from './libs/utils'
 import Item from './components/Item.vue'
+import DailyArticle from './components/DailyArticle.vue';
 export default {
   data() {
     return {
@@ -55,17 +59,31 @@ export default {
       dailyTime: $.getTodayTime(),
       isLoading: false,
       list: [],
-      isLoading: false
+      isLoading: false,
+      articleId: 0
     }
   },
   components: {
     Item,
+    DailyArticle,
   },
   mounted() {
     this.getThemes()
     this.getRecommendList()
+    const $list = this.$refs.list
+    $list.addEventListener('scroll', () => {
+      if(this.type === 'daily' || this.isLoading) return
+      if($list.scrollTop + document.body.clientHeight >= $list.scrollHeight
+      ){
+         this.dailyTime -= 86400000
+         this.getRecommendList()
+       }
+    })
   },
   methods: {
+    handleClick(id) {
+      this.articleId = id
+    },
     handleScroll() {
       const $list = this.$refs.list
       if(this.type === 'daily' || this.isLoading) return
@@ -76,8 +94,6 @@ export default {
     },
     getThemes() {
       $.ajax.get('themes').then(res => {
-        console.log(res)
-
         this.themes = res.others
       })
     },

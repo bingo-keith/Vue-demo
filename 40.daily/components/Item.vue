@@ -1,11 +1,11 @@
 <template>
     <a class="daily-item">
-        <div class="daily-img" v-if="data.images">
-            <img :src="imgPath + data.images[0]">
+        <div class="daily-img" v-if="data && data.images">
+            <img :src="imgPath + data && data.images[0]">
         </div>
         <div class="daily-title"
-            :class="{noImg: !data.images}"
-        >{{ data.title }}</div>
+            :class="{noImg: data && !data.images}"
+        >{{ data && data.title }}</div>
     </a>
 </template>
 
@@ -21,6 +21,10 @@ export default {
         return {
             imgPath: $.imgPath
         }
+    },
+    created() {
+        console.log(this.data, 'test');
+        
     }
 };
 </script>
